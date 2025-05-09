@@ -61,3 +61,74 @@ python app.py
 ```
 
 The backend server will start on http://localhost:5000.
+
+API Document
+
+### Authentication
+ 
+  
+- `POST /api/register` - Register a new user
+
+- Request: `{ "username": "string", "email": "string", "password": "string" }`
+
+- Response: `{ "message": "User created successfully" }`
+
+  
+
+- `POST /api/login` - Login a user
+
+- Request: `{ "username": "string", "password": "string" }`
+
+- Response: `{ "token": "JWT_TOKEN", "user": { ... } }`
+
+  
+
+### Notes
+
+  
+
+All note endpoints require authentication with an Authorization header: `Authorization: Bearer <token>`
+
+  
+
+- `GET /api/notes` - Get all notes for the authenticated user
+
+- Response: `[{ "id": 1, "title": "string", "content": "string", ... }, ...]`
+
+  
+
+- `GET /api/notes/:id` - Get a specific note
+
+- Response: `{ "id": 1, "title": "string", "content": "string", ... }`
+
+  
+
+- `POST /api/notes` - Create a new note
+
+- Request: `{ "title": "string", "content": "string" }`
+
+- Response: `{ "id": 1, "title": "string", "content": "string", ... }`
+
+  
+
+- `PUT /api/notes/:id` - Update a note
+
+- Request: `{ "title": "string", "content": "string" }`
+
+- Response: `{ "id": 1, "title": "string", "content": "string", ... }`
+
+  
+
+- `DELETE /api/notes/:id` - Delete a note
+
+- Response: `{ "message": "Note deleted" }`
+
+  
+
+### User Profile
+
+  
+
+- `GET /api/me` - Get authenticated user's profile
+
+- Response: `{ "id": 1, "username": "string", "email": "string", ... }`
