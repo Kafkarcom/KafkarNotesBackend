@@ -15,3 +15,7 @@ class Config:
     
     # Debug mode
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+
+    # Logging configuration
+    LOGGING_LEVEL = os.environ.get('LOGGING_LEVEL', 'INFO').upper()
+    LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
