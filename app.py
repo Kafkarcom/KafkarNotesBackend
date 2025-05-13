@@ -10,16 +10,50 @@ import jwt
 import datetime as dt
 from functools import wraps
 
-# Set up logging configuration
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    handlers=[
-        logging.FileHandler('logs/app.log'),
-        logging.StreamHandler()
-    ]
-)
-logger = logging.getLogger(__name__)
+def setup_logging(testing=False):
+    """Configure logging for the application"""
+    log_level = os.environ.get('LOG_LEVEL', 'DEBUG')
+    
+    # Generate timestamp for the log filename
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    
+    # Create log filename based on whether we're testing or not
+    if testing:
+        log_file = f'logs/test_{timestamp}.log'
+    else:
+        log_file = f'logs/app_{timestamp}.log'
+    
+    # Create a symbolic link to the latest log file
+    latest_log = 'logs/test.log' if testing else 'logs/app.log'
+    
+    # Ensure logs directory exists
+    if not os.path.exists('logs'):
+        os.makedirs('logs')
+    
+    # Configure logging
+    logging.basicConfig(
+        level=getattr(logging, log_level),
+        format='%(asctime)s [%(levelname)s] %(message)s',
+        handlers=[
+            logging.FileHandler(log_file),
+            logging.StreamHandler()
+        ]
+    )
+    
+    # Create or update symbolic link to latest log file
+    try:
+        if os.path.exists(latest_log):
+            os.remove(latest_log)
+        os.symlink(os.path.basename(log_file), latest_log)
+    except Exception as e:
+        print(f"Warning: Could not create symbolic link to latest log: {e}")
+    
+    logger = logging.getLogger(__name__)
+    logger.info(f"Logging initialized. Log file: {log_file}")
+    return logger
+
+# Initialize logger based on environment
+logger = setup_logging(testing=os.environ.get('TESTING') == 'True')
 
 app = Flask(__name__)
 CORS(app)
