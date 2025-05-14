@@ -54,6 +54,8 @@ class AppTestCase(unittest.TestCase):
         logger.info("Test cleanup complete")
 
     def test_get_notes(self):
+        """Tests retrieving all notes for a user.
+        Verifies that authenticated users can retrieve their notes successfully."""
         logger.info("Testing GET /api/notes endpoint")
         with app.app_context():
             response = self.app.get('/api/notes', headers=self.headers)
@@ -61,6 +63,8 @@ class AppTestCase(unittest.TestCase):
             logger.info("GET /api/notes test passed")
 
     def test_register(self):
+        """Tests new user registration functionality.
+        Verifies that users can register with valid credentials and receive correct response."""
         logger.info("Testing user registration")
         with app.app_context():
             test_data = {
@@ -74,6 +78,8 @@ class AppTestCase(unittest.TestCase):
             logger.info("User registration test passed")
 
     def test_login(self):
+        """Tests user authentication via login.
+        Verifies that users can login with correct credentials and receive a valid JWT token."""
         logger.info("Testing user login")
         with app.app_context():
             test_data = {
@@ -87,6 +93,8 @@ class AppTestCase(unittest.TestCase):
             logger.info("User login test passed")
 
     def test_create_note(self):
+        """Tests note creation functionality.
+        Verifies that authenticated users can create new notes with valid title and content."""
         logger.info("Testing note creation")
         with app.app_context():
             test_note = {'title': 'Test Note', 'content': 'Test Content'}
@@ -99,6 +107,9 @@ class AppTestCase(unittest.TestCase):
             logger.info("Note creation test passed")
 
     def test_get_note(self):
+        """Tests retrieving a specific note by ID.
+        Creates a note and verifies that it can be retrieved by its ID.
+        Also tests authorization as only the note's owner should be able to retrieve it."""
         logger.info("Testing get single note")
         with app.app_context():
             # First create a note
@@ -117,6 +128,9 @@ class AppTestCase(unittest.TestCase):
             logger.info("Get single note test passed")
 
     def test_update_note(self):
+        """Tests note update functionality.
+        Creates a note, then tests updating its title and content.
+        Verifies that only authenticated owners can update their notes."""
         logger.info("Testing note update")
         with app.app_context():
             # First create a note
@@ -140,6 +154,9 @@ class AppTestCase(unittest.TestCase):
             logger.info("Note update test passed")
 
     def test_delete_note(self):
+        """Tests note deletion functionality.
+        Creates a note and verifies it can be deleted by its owner.
+        Tests both successful deletion and proper authentication/authorization."""
         logger.info("Testing note deletion")
         with app.app_context():
             # First create a note
