@@ -6,6 +6,10 @@ logs/
 *.log
 !logs/.gitkeep
 
+# test_reports
+test_reports/
+*.md
+!test_reports/.gitkeep
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

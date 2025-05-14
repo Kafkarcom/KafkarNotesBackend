@@ -67,43 +67,11 @@ else:
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev_secret_key')
 
-db = SQLAlchemy(app)
+# Initialize database
+from database.db import db, init_db
+from database.models import User, Note
 
-# Models
-class User(db.Model):
-    __tablename__ = 'users'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(200), nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    notes = db.relationship('Note', backref='author', lazy=True)
-    
-    def __repr__(self):
-        return f'<User {self.username}>'
-
-class Note(db.Model):
-    __tablename__ = 'notes'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-    content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    
-    def __repr__(self):
-        return f'<Note {self.title}>'
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'title': self.title,
-            'content': self.content,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat()
-        }
+init_db(app)
 
 # Helper function for token verification
 def token_required(f):
@@ -271,10 +239,6 @@ def delete_note(current_user, note_id):
         logger.error(f"Error deleting note {note_id}: {str(e)}")
         db.session.rollback()
         return jsonify({'message': 'Error deleting note'}), 500
-
-# Create tables
-with app.app_context():
-    db.create_all()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
