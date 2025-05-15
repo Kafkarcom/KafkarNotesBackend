@@ -7,7 +7,7 @@ def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description='Run the Flask API application')
     parser.add_argument('--debug', action='store_true', help='Run in debug mode')
-    parser.add_argument('--host', default='127.0.0.1', help='Host to bind to')
+    parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')
     parser.add_argument('--port', type=int, default=5000, help='Port to bind to')
     return parser.parse_args()
 

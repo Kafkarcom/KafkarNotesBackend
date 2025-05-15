@@ -177,5 +177,21 @@ class AppTestCase(unittest.TestCase):
             self.assertEqual(response.status_code, 200)
             logger.info("Note deletion test passed")
 
+    def test_health_check(self):
+        """Tests the health check endpoint.
+        Verifies that the server returns health status and required information."""
+        logger.info("Testing health check endpoint")
+        with app.app_context():
+            response = self.app.get('/api/health')
+            self.assertEqual(response.status_code, 200)
+            
+            data = json.loads(response.data.decode('utf-8'))
+            self.assertEqual(data['status'], 'healthy')
+            self.assertIn('timestamp', data)
+            self.assertIn('uptime_seconds', data)
+            self.assertIn('process', data)
+            self.assertIn('message', data)
+            logger.info("Health check test passed")
+
 if __name__ == '__main__':
     unittest.main()

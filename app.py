@@ -10,6 +10,9 @@ import jwt
 import datetime as dt
 from functools import wraps
 
+# Import the health check module
+from utils.health import get_server_health
+
 def setup_logging(testing=False):
     """Configure logging for the application"""
     log_level = os.environ.get('LOG_LEVEL', 'DEBUG')
@@ -239,6 +242,20 @@ def delete_note(current_user, note_id):
         logger.error(f"Error deleting note {note_id}: {str(e)}")
         db.session.rollback()
         return jsonify({'message': 'Error deleting note'}), 500
+
+# Health check endpoint
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    try:
+        health_data = get_server_health()
+        return jsonify(health_data), 200
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        return jsonify({
+            'status': 'error',
+            'message': 'Internal server error during health check',
+            'timestamp': datetime.utcnow().isoformat()
+        }), 500
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
